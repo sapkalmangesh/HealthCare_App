@@ -1,7 +1,11 @@
 package com.ms.in.specialization;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ public class SpecializationRepositoryTest {
 	/***
 	 * 1. Test save operation
 	 */
+    @Disabled
 	@Test
 	@Order(1)
 	public void specTestCreate() {
@@ -38,7 +43,13 @@ public class SpecializationRepositoryTest {
 	/***
 	 * 2. Test Display all operation
 	 */
+	@Test
+	@Order(2)
 	public void specTestFetchAll() {
+		List<Specialization> list = repo.findAll();
+		if(list.isEmpty()) {
+			fail();
+		}
 		
 	}
 
