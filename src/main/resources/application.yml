@@ -6,10 +6,9 @@ spring:
     password: tiger
     url: jdbc:mysql://localhost:3306/health
     username: root
-  jap:
-    hibernate:
-      shwo-sql: true
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+    show-sql: true
+

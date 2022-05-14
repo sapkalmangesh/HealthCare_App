@@ -29,12 +29,11 @@ public class SpecializationRepositoryTest {
 	/***
 	 * 1. Test save operation
 	 */
-    @Disabled
 	@Test
 	@Order(1)
 	public void specTestCreate() {
-		Specialization spec= new Specialization(null,"CRLDS","Cardiologists",
-												 "They’re experts on the heart and blood vessels.");
+		Specialization spec= new Specialization(null,"Gyno","Gynologists",
+												 "They’re experts in pregnacy time");
 		spec=repo.save(spec);
 		assertNotNull(spec.getSpecId(), "Spec id not created");
 		
