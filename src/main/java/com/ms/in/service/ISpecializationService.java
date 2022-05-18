@@ -1,9 +1,6 @@
 package com.ms.in.service;
 
 import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.ms.in.entity.Specialization;
 
 public interface ISpecializationService {
