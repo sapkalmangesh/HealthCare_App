@@ -19,16 +19,33 @@ import lombok.NoArgsConstructor;
 public class Specialization {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="specId_col")
+	@Column(
+			name = "specId_col"
+			)
 	private Long specId;
 	
-	@Column(name="specCode_col")
+	@Column(
+			name = "specCode_col",
+			length = 15,
+			nullable = false,
+			unique = true
+			)
 	private String specCode;
 	
-	@Column(name="specName_col")
+	@Column(
+			name = "specName_col",
+			length = 50,
+			nullable = false,
+			unique = true
+			)
 	private String specName;
 	
-	@Column(name="speckNotes_col")
+	@Column(
+			name= "speckNotes_col",
+			length = 250,
+			nullable = false,
+			unique = true
+			)
 	private String specNotes;
 
 }
