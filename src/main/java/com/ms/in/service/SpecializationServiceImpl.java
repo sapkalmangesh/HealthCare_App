@@ -42,6 +42,6 @@ public class SpecializationServiceImpl implements ISpecializationService {
 
 	@Override
 	public void updateSpecialization(Specialization spec) {
-   
+		repo.save(spec);
 	}	
 }
