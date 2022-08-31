@@ -41,7 +41,7 @@ public class Specialization {
 	private String specName;
 	
 	@Column(
-			name= "speckNotes_col",
+			name= "specNotes_col",
 			length = 250,
 			nullable = false,
 			unique = true

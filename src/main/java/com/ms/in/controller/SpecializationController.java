@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ms.in.entity.Specialization;
+import com.ms.in.exception.SpecializationNotFoundException;
 import com.ms.in.service.ISpecializationService;
+import com.ms.in.view.SpecializationExcelView;
 
 @Controller
 @RequestMapping("/spec")
@@ -79,8 +83,14 @@ public class SpecializationController {
 			RedirectAttributes attributes
 			) 
 	{
-		service.removeSpecialization(id);
-		attributes.addAttribute("message", "Specialization record "+id+" is removed.");
+		try {
+			service.removeSpecialization(id);
+			attributes.addAttribute("message", "Specialization record "+id+" is removed.");
+			
+		} catch (SpecializationNotFoundException e) {
+			e.printStackTrace();
+			attributes.addAttribute("message", e.getMessage());
+		}
 		return "redirect:all";
 		
 	}
@@ -92,13 +102,22 @@ public class SpecializationController {
 	 * @return
 	 */
 	@GetMapping("/edit")
-	public String showEditPata(
+	public String showEditData(
 			@RequestParam Long id,
-			Model model)
+			Model model,
+			RedirectAttributes attribute)
 	{
-		Specialization spec = service.getOneSpecialization(id);
-		model.addAttribute("specialization", spec);
-		return "SpecializationEdit";
+		String page=null;
+		try {
+			Specialization spec = service.getOneSpecialization(id);
+			model.addAttribute("specialization", spec);
+			page= "SpecializationEdit";
+		} catch (SpecializationNotFoundException e) {
+			e.printStackTrace();
+			attribute.addAttribute("message", e.getMessage());
+			page = "redirect:all";
+			}
+		return page;
 	}
 	
 	/***
@@ -113,8 +132,41 @@ public class SpecializationController {
 			RedirectAttributes attributes) 
 	{
 		service.updateSpecialization(specialization);
-		attributes.addAttribute("message", "Specialization record "+specialization.getSpecId()+" is updated.");
+		attributes.addAttribute("message", "Specialization record "+specialization.getSpecId()+" is Updated.");
 		return "redirect:all";
+	}
+	
+	@GetMapping("/checkCode")
+	@ResponseBody
+	public String validateSpecCode(
+			@RequestParam String code, 
+			@RequestParam Long id) 
+	{
+		String message = "";
+		if(id==0 && service.isSpecCodeExist(code)) {//register check
+			message = code + ", already exist.";
+		}else if(id!=0 && service.isSpecCodeExistForEdit(code, id)) {//edit check
+			message = code + ", already exist.";
+		}
+			return message;
+	}
+	
+	/***
+	 * On click 'ExcelExport' hyperlink in DataPage, fetch all record form
+	 * database, convert into List<T> collection and send into 'ModelAndView'
+	 * class object in the form of ModelMap memory.
+	 * @return
+	 */
+	@GetMapping("/excel")
+	public ModelAndView exportToExel() {
+		ModelAndView m = new ModelAndView();
+		m.setView(new SpecializationExcelView());
+		//read data form db
+		List<Specialization> list = service.getAllSpecialization();
+		//send to exel impl class
+		m.addObject("list",list);
+		return m;
+		
 	}
 
 }

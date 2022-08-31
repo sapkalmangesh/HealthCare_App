@@ -11,6 +11,7 @@
             <h3>Specialization Data</h3>
         </div>
         <div class="card-body">
+        <a th:href= "@{/spec/excel}" class = "btn btn-primary text-white">Excel_Export</a>
             <table class="table table-hover">
                 <tr class="bg-info text-white">
                     <th>Id</th>
@@ -31,8 +32,10 @@
                 </tr>
             </table>
         </div>
-        <div th:if="${message!=null}" class="card-footer bg-white text-info">
-            <span th:text="${message}"></span>
+        <div th:if="${message!=null}" class="card-footer bg-white text-danger">
+            <h3>
+               <span th:text="${message}"></span>
+            </h3>  
         </div>
         
     </div>

@@ -25,9 +25,14 @@ $(document).ready (function (){
                     $("#specCodeError").css('color','red');
                     specCodeError = false;
                 }else{
+						var id = 0;
+						if($("#id").val()!=undefined){
+							specCodeError = true;
+							id = $("#id").val();
+						}
 						$.ajax({
 						url:'checkCode',
-						data: {"code": val},
+						data: {"code": val, "id":id},
 						success:function(responseText){
 							if(responseText!=''){
 								 $("#specCodeError").show();
@@ -40,8 +45,8 @@ $(document).ready (function (){
 							}
 						}
                    });
-                   
                 }
+                    	
                 return specCodeError;
             }
 
@@ -61,8 +66,8 @@ $(document).ready (function (){
                   specNameError = false;
 
                 }else{
-					$("#specNameError").hide();
-                      specNameError = false;
+                  $("#specNameError").hide();
+                  specNameError = true;
                 }
                 return specNameError;
             }
