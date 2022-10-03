@@ -51,7 +51,7 @@ public class Doctor {
 	//---------------Association Mapping--------------
 	@ManyToOne
 	@JoinColumn(name= "spec_id_fk_col")
-	private Specialization specializations;
+	private Specialization specialization;
 
 
 }

@@ -3,6 +3,7 @@ package com.ms.in.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import com.ms.in.entity.Doctor;
 import com.ms.in.exception.DoctorNotFoundException;
 import com.ms.in.service.IDoctorService;
 import com.ms.in.service.ISpecializationService;
+import com.ms.in.util.MyMailUtil;
 
 @Controller
 @RequestMapping("/doctor")
@@ -27,6 +29,9 @@ public class DoctorController {
 	@Autowired
 	private ISpecializationService specializationservice;
 	
+	@Autowired
+	private MyMailUtil mailUtil;
+	
 	private void createDynamicUi(Model model) {
 		model.addAttribute("specializations", specializationservice.getSpecIdAndName());
 	}
@@ -34,9 +39,11 @@ public class DoctorController {
 	//1.show register
 	@GetMapping("/register")
 	public String showRegister(
+			@RequestParam(value = "message", required = false) String message,
 			Model model
 			) 
 	{
+		model.addAttribute("message", message);
 		createDynamicUi(model);
 		return "DoctorRegister";
 	}
@@ -45,13 +52,26 @@ public class DoctorController {
 	@PostMapping("/save")
 	public String createDoctor(
 			@ModelAttribute Doctor doctor,
-			Model model
+			RedirectAttributes attributes
 			)
 	{
 		Long id = service.saveDoctor(doctor);
 		String message = "Doctor '"+id+" ' is created";
-		model.addAttribute("message", message);
-		return "DoctorRegister"	;
+		attributes.addAttribute("message", message);
+		if(id!=null) {
+			new Thread(new Runnable() {
+				public void run() {
+					
+					mailUtil.send(
+							doctor.getEmail(), 
+							"SUCCESS", 
+							message, 
+							new ClassPathResource("/static/myres/sample.pdf"));
+				}
+				
+			}).start();
+		}
+		return "redirect:register";
 	}
 	
 	//3.showAllDoctor
@@ -71,16 +91,16 @@ public class DoctorController {
 	@GetMapping("/delete")
 	public String deleteDoctor(
 			@RequestParam Long id,
-			RedirectAttributes attribue
+			RedirectAttributes attribute
 			) 
 	{	
 		try {
 			service.removeDoctor(id);
-			attribue.addAttribute("message","Doctor record '"+id+"' removed successfully.");
+			attribute.addAttribute("message","Doctor record '"+id+"' removed successfully.");
 			
 		} catch (DoctorNotFoundException e) {
 			e.printStackTrace();
-			attribue.addAttribute("message",e.getMessage());
+			attribute.addAttribute("message",e.getMessage());
 		}
 		return "redirect:all";
 		

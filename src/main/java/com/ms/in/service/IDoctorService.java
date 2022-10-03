@@ -1,6 +1,7 @@
 package com.ms.in.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ms.in.entity.Doctor;
 
@@ -15,5 +16,7 @@ public interface IDoctorService {
 	public Doctor getOneDoctor(Long id);
 	
 	public void updateDoctor(Doctor doc);
+	
+	public Map<Long,String> getDoctorsName();
 
 }

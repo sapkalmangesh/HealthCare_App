@@ -1,28 +1,50 @@
 package com.ms.in.service.Impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ms.in.entity.Doctor;
+import com.ms.in.entity.User;
 import com.ms.in.exception.DoctorNotFoundException;
 import com.ms.in.repo.DoctorRepository;
 import com.ms.in.service.IDoctorService;
+import com.ms.in.service.IUserService;
+import com.ms.in.service.constant.UserRoles;
+import com.ms.in.util.MyCollectionUtil;
+import com.ms.in.util.UserUtil;
 
 @Service
 public class DoctorServiceImpl implements IDoctorService {
 	
 	@Autowired
 	private DoctorRepository repo;
+	
+	@Autowired
+	private IUserService userservice;
+	
+	@Autowired
+	private UserUtil userUtil;
 
 	@Override
 	public Long saveDoctor(Doctor doc) 
-	{
-	/** Doctor doctor = repo.save(doc);
-		return doctor.getId();**/
-		return repo.save(doc).getId();
+	{	
+		Long id = repo.save(doc).getId();
+		if(id!=null) {
+			User user = new User();
+			user.setDisplayName(doc.getFirstName()+" "+doc.getLastName());
+			user.setUsername(doc.getEmail());
+			user.setPassword(userUtil.genPwd());
+			user.setRole(UserRoles.DOCTOR.name());
+			userservice.saveUser(user);
+			
+			//TODO- Email part is pending
+			
+		}
+		return id;
 	}
 
 	@Override
@@ -55,6 +77,12 @@ public class DoctorServiceImpl implements IDoctorService {
 	@Override
 	public void updateDoctor(Doctor doc) {
 		repo.save(doc);
+	}
+
+	@Override
+	public Map<Long, String> getDoctorsName() {
+		List<Object[]> list = repo.getDoctorsName();
+		return MyCollectionUtil.converToMapIndex(list);
 	}
 
 }
