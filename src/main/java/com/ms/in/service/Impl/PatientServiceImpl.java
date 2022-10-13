@@ -13,6 +13,7 @@ import com.ms.in.repo.PatientRepository;
 import com.ms.in.service.IPatientService;
 import com.ms.in.service.IUserService;
 import com.ms.in.service.constant.UserRoles;
+import com.ms.in.util.MyMailUtil;
 import com.ms.in.util.UserUtil;
 
 @Service
@@ -26,19 +27,29 @@ public class PatientServiceImpl implements IPatientService {
 	
 	@Autowired
 	private UserUtil userUtil;
+	
+	@Autowired
+	private MyMailUtil mailUtil;
 
 	@Override
 	public long savePatient(Patient patient) {
 		Long id =  repo.save(patient).getId();
 		if(id!=null) {
+			String  pwd = userUtil.genPwd();
 			User user = new User();
 			user.setDisplayName(patient.getFirstName()+" "+patient.getLastName());
 			user.setUsername(patient.getEMail());
-			user.setPassword(userUtil.genPwd());
+			user.setPassword(pwd);
 			user.setRole(UserRoles.PATIENT.name());
-			userservice.saveUser(user);
-			
-			//TODO-Email part is pending
+			Long genId = userservice.saveUser(user);
+			if(genId!=null) {
+				new Thread(new Runnable() {
+					public void run() {
+						String text = "Username is"+ patient.getEMail()+" , Password is"+pwd;
+						mailUtil.send(patient.getEMail(), "PATIENT ADDED", text);
+					}
+				}).start();
+			}
 			
 		}
 		return id;

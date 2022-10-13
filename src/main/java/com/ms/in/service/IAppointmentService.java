@@ -15,5 +15,8 @@ public interface IAppointmentService {
 	public void removeAppointment(Long id);
 	
 	public void updateAppointment(Appointment appointment);
+	
+	public List<Object[]> getAppointmentByDoctor(Long docId);
+
 
 }

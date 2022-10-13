@@ -1,0 +1,33 @@
+<html xmlns:th="https://www.thymeleaf.org/">
+	<div th:replace="fragments/commonui:: header"></div>
+<body>
+<div th:replace="fragments/commonui :: menu"></div>
+    <div class="container ">
+        <div class="card-header bg-primary text-center text-white">
+            <h3>Appointment Slots For Booking</h3>
+        </div>
+        <div class="card-body">
+        	<div>[[${message}]]</div>
+            <table class="table table-hover">
+                <tr class="bg-primary text-white">
+                	<th>Sr.No </th>
+                    <th>Date</th>
+                    <th>Slots</th>
+                    <th>Cunsulting Amount</th>
+                    <th>Operation</th>
+                </tr>
+                <tr th:each="ob,i:${appt_list}">
+                    <td th:text="${i.count}"></td>
+                    <td th:text="${ob[0]}"></td>
+                    <td th:text="${ob[1]}"></td>
+                    <td th:text="${ob[2]}"></td>
+                    <td>
+                       <a class="btn btn-success">Book Slot</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

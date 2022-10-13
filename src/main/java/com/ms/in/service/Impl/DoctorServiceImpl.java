@@ -15,6 +15,7 @@ import com.ms.in.service.IDoctorService;
 import com.ms.in.service.IUserService;
 import com.ms.in.service.constant.UserRoles;
 import com.ms.in.util.MyCollectionUtil;
+import com.ms.in.util.MyMailUtil;
 import com.ms.in.util.UserUtil;
 
 @Service
@@ -28,20 +29,30 @@ public class DoctorServiceImpl implements IDoctorService {
 	
 	@Autowired
 	private UserUtil userUtil;
+	
+	@Autowired
+	private MyMailUtil mailUtil;
 
 	@Override
 	public Long saveDoctor(Doctor doc) 
 	{	
 		Long id = repo.save(doc).getId();
-		if(id!=null) {
+		if(id!=null){
+			String pwd = userUtil.genPwd();
 			User user = new User();
 			user.setDisplayName(doc.getFirstName()+" "+doc.getLastName());
 			user.setUsername(doc.getEmail());
-			user.setPassword(userUtil.genPwd());
+			user.setPassword(pwd);
 			user.setRole(UserRoles.DOCTOR.name());
-			userservice.saveUser(user);
-			
-			//TODO- Email part is pending
+			Long genId = userservice.saveUser(user);
+			if(genId!=null) {
+				new Thread(new Runnable() {
+					public void run() {
+						String text = "Username is"+ doc.getEmail()+" , Password is"+pwd;
+						mailUtil.send(doc.getEmail(), "DOCTOR ADDED", text);
+					}
+				}).start();
+			}
 			
 		}
 		return id;
@@ -83,6 +94,11 @@ public class DoctorServiceImpl implements IDoctorService {
 	public Map<Long, String> getDoctorsName() {
 		List<Object[]> list = repo.getDoctorsName();
 		return MyCollectionUtil.converToMapIndex(list);
+	}
+
+	@Override
+	public List<Doctor> findDoctorBySpecialization(Long specId) {
+		return repo.findDoctorBySpecialization(specId);
 	}
 
 }

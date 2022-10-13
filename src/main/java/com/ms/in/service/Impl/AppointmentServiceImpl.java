@@ -49,6 +49,12 @@ public class AppointmentServiceImpl implements IAppointmentService {
 	public void updateAppointment(Appointment appointment) {
 		repo.save(appointment);
 	}
+
+	@Override
+	public List<Object[]> getAppointmentByDoctor(Long docId) {
+		return repo.getAppointmentByDoctor(docId);
+		 
+	}
 	
 
 }
