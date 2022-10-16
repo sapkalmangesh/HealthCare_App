@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.ms.in.service.constant.UserRoles;
 import com.ms.in.util.MyMailUtil;
@@ -32,18 +33,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		//.antMatchers("/patient/register","/patient/save").permitAll()
-		//.antMatchers("/patient/all").hasAuthority(UserRoles.ADMIN.name())
-		//.antMatchers("/doctor/**").hasAuthority(UserRoles.ADMIN.name())
+		.antMatchers("/user/login").permitAll()
+		.antMatchers("/patient/register","/patient/save").permitAll()
+		.antMatchers("/spec/**").hasAuthority(UserRoles.ADMIN.name())
+		.antMatchers("/doctor/**").hasAuthority(UserRoles.ADMIN.name())
+		.antMatchers("/appointment/register","/appointment/save","/appointment/all").hasAuthority(UserRoles.ADMIN.name())
+		.antMatchers("/appointment/view","/appointment/viewSlot").hasAuthority(UserRoles.PATIENT.name())
 		
 		.anyRequest().authenticated()
 		
 		.and()
 		.formLogin()
-		.defaultSuccessUrl("/spec/all",true)
+		.loginPage("/user/login")// for login page
+		.loginProcessingUrl("/login") // POST type (do login)
+		.defaultSuccessUrl("/user/setup",true)
+		.failureUrl("/user/login?error=true")// if login is failed
 		
 		.and()
-		.logout();
+		.logout()
+		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+		.logoutSuccessUrl("/user/login?logout=true")
+		;
 	}
 
 

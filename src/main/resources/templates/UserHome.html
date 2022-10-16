@@ -5,9 +5,12 @@
 <body>
 	<div th:replace="fragments/commonui :: menu"></div>
 	<div class="container">
-		<h3>UNABLE TO PROCESS REQUEST</h3>
-		<a th:href="@{/spec/all}" class="btn btn-primary">GOTO HOME</a>
+		<div class="card">
+			<div class="card-header bg-primary text-center text-white">
+				<h3>WELCOME TO HOSPITAL APPLICATION</h3>
+			</div>
+			<img th:src="@{/images/hospital.jpg}"/>
+		</div>
 	</div>
 </body>
-
 </html>

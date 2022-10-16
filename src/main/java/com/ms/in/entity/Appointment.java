@@ -2,6 +2,7 @@ package com.ms.in.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -33,9 +33,9 @@ public class Appointment {
     @JoinColumn(name = "doc_fk_col")
 	private Doctor doctor;
 	
-	@Column(name="appoint_date_col")
-	@DateTimeFormat(iso=ISO.DATE)
+	@DateTimeFormat(iso =  ISO.DATE)
 	@Temporal(TemporalType.DATE)
+	@Column(name="appoint_date_col")
 	private Date date;
 	
 	@Column(name="appoint_slot_col")
